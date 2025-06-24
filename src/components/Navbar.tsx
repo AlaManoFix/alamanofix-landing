@@ -1,47 +1,78 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
+import Loader from '@/components/Loader';
 import { Menu, X, ArrowRight } from 'lucide-react';
 
 const navLinks = [
-  { label: 'Inicio', href: '#hero' },
-  { label: '¿Cómo funciona?', href: '#como-funciona' },
-  { label: 'Soy profesionista', href: '/profesionales' }
+  { label: 'Inicio', href: '/#hero' },
+  { label: '¿Cómo funciona?', href: '/#como-funciona' },
 ];
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // Navegación con loader y protección si ya estás en la ruta
+  const handleRedirect = async (path: string) => {
+    if (pathname === path) return;
+    setIsLoading(true);
+    await new Promise((r) => setTimeout(r, 500)); // Simula breve espera
+    router.push(path);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-white z-50">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-        
+
         {/* Logo */}
-        <Link href="#hero" className="text-2xl font-bold text-orange-500">
+        <a href="/#hero" className="text-2xl font-bold text-orange-500">
           AlaManoFix
-        </Link>
+        </a>
 
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center space-x-6">
           {navLinks.map((item) => (
-            <Link
+            <a
               key={item.label}
               href={item.href}
               className="text-gray-700 hover:text-orange-500 transition-colors text-sm font-medium"
             >
               {item.label}
-            </Link>
+            </a>
           ))}
 
-          {/* CTA button */}
-          <Link
-            href="/app"
+          {/* Soy profesionista */}
+          <button
+            onClick={() => handleRedirect('/profesionales')}
+            className={`text-sm font-medium transition-colors ${
+              pathname === '/profesionales'
+                ? 'text-orange-500 font-semibold'
+                : 'text-gray-700 hover:text-orange-500'
+            }`}
+          >
+            Soy profesionista
+          </button>
+
+          {/* Usa la app */}
+          <button
+            onClick={() => handleRedirect('/web-app')}
             className="flex items-center gap-2 bg-orange-500 text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-orange-600 hover:scale-105 transition-all shadow-md"
           >
             Usa la app
             <ArrowRight className="w-4 h-4" />
-          </Link>
+          </button>
         </nav>
 
         {/* Mobile menu toggle */}
@@ -58,22 +89,37 @@ export default function Navbar() {
       {menuOpen && (
         <div className="md:hidden bg-white px-4 pb-4 shadow-sm">
           {navLinks.map((item) => (
-            <Link
+            <a
               key={item.label}
               href={item.href}
               className="block py-2 text-gray-800 hover:text-orange-500 text-sm"
               onClick={() => setMenuOpen(false)}
             >
               {item.label}
-            </Link>
+            </a>
           ))}
-          <Link
-            href="/app"
-            className="mt-3 block text-center bg-orange-500 text-white px-6 py-2 rounded-full font-semibold hover:bg-orange-600 hover:scale-105 transition-all shadow-md"
-            onClick={() => setMenuOpen(false)}
+          <button
+            onClick={() => {
+              setMenuOpen(false);
+              handleRedirect('/web-app');
+            }}
+            className="mt-3 block w-full text-center bg-orange-500 text-white px-6 py-2 rounded-full font-semibold hover:bg-orange-600 hover:scale-105 transition-all shadow-md"
           >
             Usa la app
-          </Link>
+          </button>
+          <button
+            onClick={() => {
+              setMenuOpen(false);
+              handleRedirect('/profesionales');
+            }}
+            className={`mt-2 block w-full text-center text-sm font-medium transition-colors ${
+              pathname === '/profesionales'
+                ? 'text-orange-500 font-semibold'
+                : 'text-gray-700 hover:text-orange-500'
+            }`}
+          >
+            Soy profesionista
+          </button>
         </div>
       )}
     </header>
