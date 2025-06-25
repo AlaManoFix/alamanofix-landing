@@ -1,11 +1,16 @@
 'use client';
 
+import { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { useState } from 'react';
-import ReCAPTCHA from 'react-google-recaptcha';
+import Loader from '@/components/Loader';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function RegistroProfesionalPage() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [formData, setFormData] = useState({
     nombre: '',
     profesion: '',
@@ -15,116 +20,265 @@ export default function RegistroProfesionalPage() {
     confirmPassword: '',
   });
 
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  const [captchaError, setCaptchaError] = useState(false);
+  const [errors, setErrors] = useState({
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const [passwordChecks, setPasswordChecks] = useState({
+    length: false,
+    uppercase: false,
+    lowercase: false,
+    number: false,
+    symbol: false,
+  });
+
+  const updatePasswordChecks = (password: string) => {
+    setPasswordChecks({
+      length: password.length >= 8,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /\d/.test(password),
+      symbol: /[@$!%*?&.#]/.test(password),
+    });
   };
 
-  const handleCaptchaChange = (token: string | null) => {
-    setCaptchaToken(token);
-    setCaptchaError(false);
+  const validateEmail = (email: string) => /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email);
+  const validatePassword = (password: string) =>
+    Object.values(passwordChecks).every(Boolean);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+
+    if (name === 'email') {
+      setErrors((prev) => ({
+        ...prev,
+        email: validateEmail(value) ? '' : 'Correo no válido',
+      }));
+    }
+
+    if (name === 'password') {
+      updatePasswordChecks(value);
+      setErrors((prev) => ({
+        ...prev,
+        password: validatePassword(value)
+          ? ''
+          : 'La contraseña no cumple con los requisitos.',
+      }));
+    }
+
+    if (name === 'confirmPassword') {
+      setErrors((prev) => ({
+        ...prev,
+        confirmPassword:
+          value === formData.password ? '' : 'Las contraseñas no coinciden',
+      }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+    e.preventDefault();
+    const isEmailValid = validateEmail(formData.email);
+    const isPasswordValid = validatePassword(formData.password);
+    const doPasswordsMatch = formData.password === formData.confirmPassword;
 
-  if (!captchaToken) {
-    setCaptchaError(true);
-    return;
-  }
+    if (!isEmailValid || !isPasswordValid || !doPasswordsMatch) {
+      setErrors({
+        email: isEmailValid ? '' : 'Correo no válido',
+        password: isPasswordValid ? '' : 'La contraseña no cumple con los requisitos.',
+        confirmPassword: doPasswordsMatch ? '' : 'Las contraseñas no coinciden',
+      });
+      return;
+    }
 
-  const res = await fetch('/api/registro-profesional', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ...formData, token: captchaToken }),
-  });
+    setIsLoading(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      console.log('Registrando profesionista:', formData);
+    } catch (error) {
+      console.error('Error al registrar:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  const data = await res.json();
-
-  if (data.success) {
-    alert('✅ Registro exitoso');
-    // Redirigir o limpiar el form
-  } else {
-    alert(`❌ ${data.message}`);
-  }
-};
-
+  const inputClass =
+    'mt-1 block w-full px-3 py-2 rounded-md shadow-sm border input-bordered';
 
   return (
     <>
       <Navbar />
 
-      <section className="bg-gray-50 py-16">
-        <div className="max-w-xl mx-auto px-4">
-          <h1 className="text-3xl font-bold text-center mb-2">Registro de Profesionistas</h1>
-          <p className="text-center text-gray-600 mb-8">
-            Crea tu cuenta gratuita para comenzar a recibir solicitudes de clientes.
-          </p>
+      {isLoading ? (
+        <div className="min-h-screen flex items-center justify-center">
+          <Loader />
+        </div>
+      ) : (
+        <section className="bg-gray-50 py-16">
+          <div className="max-w-xl mx-auto px-4">
+            <h1 className="text-3xl font-bold text-center mb-2">
+              Registro de Profesionistas
+            </h1>
+            <p className="text-center text-gray-600 mb-8">
+              Crea tu cuenta gratuita para comenzar a recibir solicitudes de clientes.
+            </p>
 
-          <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-xl shadow-md">
-            {/* Campos del formulario */}
-            {['nombre', 'profesion', 'email', 'telefono'].map((field) => (
-              <div key={field}>
-                <label className="block text-sm font-medium text-gray-700 capitalize">
-                  {field === 'email' ? 'Correo electrónico' : field}
+            <form
+              onSubmit={handleSubmit}
+              className="space-y-6 bg-white p-6 rounded-xl shadow-md"
+            >
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Nombre completo
                 </label>
                 <input
-                  type={field === 'email' ? 'email' : 'text'}
-                  name={field}
-                  value={formData[field as keyof typeof formData]}
+                  type="text"
+                  name="nombre"
+                  value={formData.nombre}
                   onChange={handleChange}
                   required
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2"
+                  className={inputClass}
                 />
               </div>
-            ))}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Contraseña</label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2"
-              />
-            </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Profesión u oficio
+                </label>
+                <input
+                  type="text"
+                  name="profesion"
+                  value={formData.profesion}
+                  onChange={handleChange}
+                  required
+                  className={inputClass}
+                />
+              </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Confirmar contraseña</label>
-              <input
-                type="password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                required
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2"
-              />
-            </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Correo electrónico
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  className={`${inputClass} ${
+                    errors.email ? 'border-red-500' : ''
+                  }`}
+                />
+                {errors.email && (
+                  <p className="text-sm text-red-600 mt-1">{errors.email}</p>
+                )}
+              </div>
 
-            {/* reCAPTCHA */}
-            <div className="flex justify-center">
-              <ReCAPTCHA
-                sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
-                onChange={handleCaptchaChange}
-              />
-            </div>
-            {captchaError && (
-              <p className="text-red-500 text-sm text-center">Por favor, confirma que no eres un robot.</p>
-            )}
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Teléfono
+                </label>
+                <input
+                  type="tel"
+                  name="telefono"
+                  value={formData.telefono}
+                  onChange={handleChange}
+                  required
+                  className={inputClass}
+                />
+              </div>
 
-            <button
-              type="submit"
-              className="w-full bg-orange-500 text-white py-3 rounded-md font-semibold hover:bg-orange-600 transition"
-            >
-              Crear cuenta
-            </button>
-          </form>
-        </div>
-      </section>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Contraseña
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                    className={`${inputClass} pr-10 ${
+                      errors.password ? 'border-red-500' : ''
+                    }`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute top-2.5 right-2 text-gray-500"
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
+                <div className="mt-2 text-sm text-gray-600 space-y-1">
+                  <p className={passwordChecks.length ? 'text-green-600' : ''}>
+                    • Al menos 8 caracteres
+                  </p>
+                  <p className={passwordChecks.uppercase ? 'text-green-600' : ''}>
+                    • Una letra mayúscula
+                  </p>
+                  <p className={passwordChecks.lowercase ? 'text-green-600' : ''}>
+                    • Una letra minúscula
+                  </p>
+                  <p className={passwordChecks.number ? 'text-green-600' : ''}>
+                    • Un número
+                  </p>
+                  <p className={passwordChecks.symbol ? 'text-green-600' : ''}>
+                    • Un símbolo (@$!%*?&.#)
+                  </p>
+                </div>
+                {errors.password && (
+                  <p className="text-sm text-red-600 mt-1">{errors.password}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Confirmar contraseña
+                </label>
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    required
+                    className={`${inputClass} pr-10 ${
+                      errors.confirmPassword ? 'border-red-500' : ''
+                    }`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    className="absolute top-2.5 right-2 text-gray-500"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff size={20} />
+                    ) : (
+                      <Eye size={20} />
+                    )}
+                  </button>
+                </div>
+                {errors.confirmPassword && (
+                  <p className="text-sm text-red-600 mt-1">
+                    {errors.confirmPassword}
+                  </p>
+                )}
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-orange-500 text-white py-3 rounded-md font-semibold hover:bg-orange-600 transition"
+              >
+                Crear cuenta
+              </button>
+            </form>
+          </div>
+        </section>
+      )}
 
       <Footer />
     </>

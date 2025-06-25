@@ -1,58 +1,51 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import { useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import Loader from '@/components/Loader';
 import { Menu, X, ArrowRight } from 'lucide-react';
 
 const navLinks = [
   { label: 'Inicio', href: '/#hero' },
   { label: '¿Cómo funciona?', href: '/#como-funciona' },
-  { label: 'Soy profesionista', href: '/profesionales' },
 ];
 
 export default function Navbar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [activeHash, setActiveHash] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
 
-  // Scroll suave para navegación con hash
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      document.documentElement.style.scrollBehavior = 'smooth';
-    }
-
-    const handleHashChange = () => {
-      setActiveHash(window.location.hash);
-    };
-
-    handleHashChange(); // capturar hash actual si carga directa
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
-
-  const isLinkActive = (href: string) => {
-    // Si es una sección de la landing
-    if (href.startsWith('/#')) {
-      const sectionHash = href.replace('/#', '#');
-      return pathname === '/' && activeHash === sectionHash;
-    }
-    return pathname === href;
+  // Navegación con loader y protección si ya estás en la ruta
+  const handleRedirect = async (path: string) => {
+    if (pathname === path) return;
+    setIsLoading(true);
+    await new Promise((r) => setTimeout(r, 500)); // Simula breve espera
+    router.push(path);
   };
+
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-white z-50">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-        
+
         {/* Logo */}
-        <Link href="/" className="text-2xl font-bold text-orange-500">
+        <a href="/#hero" className="text-2xl font-bold text-orange-500">
           AlaManoFix
-        </Link>
+        </a>
 
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center space-x-6">
           {navLinks.map((item) => (
-            <Link
+            <a
               key={item.label}
               href={item.href}
               className={`text-sm font-medium transition-colors ${
@@ -62,17 +55,29 @@ export default function Navbar() {
               }`}
             >
               {item.label}
-            </Link>
+            </a>
           ))}
 
-          {/* CTA button */}
-          <Link
-            href="/app"
+          {/* Soy profesionista */}
+          <button
+            onClick={() => handleRedirect('/profesionales')}
+            className={`text-sm font-medium transition-colors ${
+              pathname === '/profesionales'
+                ? 'text-orange-500 font-semibold'
+                : 'text-gray-700 hover:text-orange-500'
+            }`}
+          >
+            Soy profesionista
+          </button>
+
+          {/* Usa la app */}
+          <button
+            onClick={() => handleRedirect('/web-app')}
             className="flex items-center gap-2 bg-orange-500 text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-orange-600 hover:scale-105 transition-all shadow-md"
           >
             Usa la app
             <ArrowRight className="w-4 h-4" />
-          </Link>
+          </button>
         </nav>
 
         {/* Mobile menu toggle */}
@@ -89,7 +94,7 @@ export default function Navbar() {
       {menuOpen && (
         <div className="md:hidden bg-white px-4 pb-4 shadow-sm space-y-2">
           {navLinks.map((item) => (
-            <Link
+            <a
               key={item.label}
               href={item.href}
               onClick={() => setMenuOpen(false)}
@@ -100,15 +105,30 @@ export default function Navbar() {
               }`}
             >
               {item.label}
-            </Link>
+            </a>
           ))}
-          <Link
-            href="/app"
-            className="block text-center bg-orange-500 text-white px-6 py-2 rounded-full font-semibold hover:bg-orange-600 hover:scale-105 transition-all shadow-md"
-            onClick={() => setMenuOpen(false)}
+          <button
+            onClick={() => {
+              setMenuOpen(false);
+              handleRedirect('/web-app');
+            }}
+            className="mt-3 block w-full text-center bg-orange-500 text-white px-6 py-2 rounded-full font-semibold hover:bg-orange-600 hover:scale-105 transition-all shadow-md"
           >
             Usa la app
-          </Link>
+          </button>
+          <button
+            onClick={() => {
+              setMenuOpen(false);
+              handleRedirect('/profesionales');
+            }}
+            className={`mt-2 block w-full text-center text-sm font-medium transition-colors ${
+              pathname === '/profesionales'
+                ? 'text-orange-500 font-semibold'
+                : 'text-gray-700 hover:text-orange-500'
+            }`}
+          >
+            Soy profesionista
+          </button>
         </div>
       )}
     </header>
