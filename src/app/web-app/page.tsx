@@ -11,20 +11,20 @@ export default function WebAppHomePage() {
   return (
     <>
       <NavbarWebApp />
-      <main className="min-h-screen bg-gray-50 px-4 sm:px-6 lg:px-8 py-10 pb-24 pt-20">
+
+      <main className="min-h-screen bg-gray-50 px-4 sm:px-6 lg:px-8 py-10 pb-24 pt-[136px]">
         {/* Encabezado de bienvenida */}
         <section className="max-w-3xl mx-auto text-center mb-10">
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-800">
             ¿Qué necesitas resolver hoy?
           </h1>
           <p className="mt-2 text-gray-600 text-base sm:text-lg">
-            Busca por servicio, problema o profesional. Es rápido y sin
-            complicaciones.
+            Busca por servicio, problema o profesional. Es rápido y sin complicaciones.
           </p>
         </section>
 
-        {/* Buscador inteligente */}
-        <section className="max-w-2xl mx-auto mb-12">
+        {/* Buscador inline solo visible en versión web */}
+        <section className="max-w-2xl mx-auto mb-12 hidden md:block">
           <SmartSearch />
         </section>
 
