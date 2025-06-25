@@ -15,13 +15,11 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const pathname = usePathname();
 
-  // Navegación con loader y protección si ya estás en la ruta
   const handleRedirect = async (path: string) => {
     if (pathname === path) return;
     setIsLoading(true);
-    await new Promise((r) => setTimeout(r, 500)); // Simula breve espera
+    await new Promise((r) => setTimeout(r, 500));
     router.push(path);
   };
 
@@ -36,7 +34,6 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-
         {/* Logo */}
         <a href="/#hero" className="text-2xl font-bold text-orange-500">
           AlaManoFix
@@ -48,11 +45,7 @@ export default function Navbar() {
             <a
               key={item.label}
               href={item.href}
-              className={`text-sm font-medium transition-colors ${
-                isLinkActive(item.href)
-                  ? 'text-orange-500 font-semibold border-b-2 border-orange-500 pb-1'
-                  : 'text-gray-700 hover:text-orange-500'
-              }`}
+              className="text-sm font-medium text-gray-700 hover:text-orange-500 transition-colors"
             >
               {item.label}
             </a>
@@ -98,15 +91,12 @@ export default function Navbar() {
               key={item.label}
               href={item.href}
               onClick={() => setMenuOpen(false)}
-              className={`block py-2 text-sm ${
-                isLinkActive(item.href)
-                  ? 'text-orange-500 font-semibold'
-                  : 'text-gray-800 hover:text-orange-500'
-              }`}
+              className="block py-2 text-sm text-gray-800 hover:text-orange-500"
             >
               {item.label}
             </a>
           ))}
+
           <button
             onClick={() => {
               setMenuOpen(false);
@@ -116,6 +106,7 @@ export default function Navbar() {
           >
             Usa la app
           </button>
+
           <button
             onClick={() => {
               setMenuOpen(false);
