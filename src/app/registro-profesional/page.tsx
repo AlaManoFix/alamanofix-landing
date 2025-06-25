@@ -3,6 +3,7 @@
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useState } from 'react';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 export default function RegistroProfesionalPage() {
   const [formData, setFormData] = useState({
@@ -14,15 +15,42 @@ export default function RegistroProfesionalPage() {
     confirmPassword: '',
   });
 
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaError, setCaptchaError] = useState(false);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Registrando profesionista:', formData);
-    // Aquí iría tu lógica de registro con API/Auth
+  const handleCaptchaChange = (token: string | null) => {
+    setCaptchaToken(token);
+    setCaptchaError(false);
   };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  if (!captchaToken) {
+    setCaptchaError(true);
+    return;
+  }
+
+  const res = await fetch('/api/registro-profesional', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ...formData, token: captchaToken }),
+  });
+
+  const data = await res.json();
+
+  if (data.success) {
+    alert('✅ Registro exitoso');
+    // Redirigir o limpiar el form
+  } else {
+    alert(`❌ ${data.message}`);
+  }
+};
+
 
   return (
     <>
@@ -36,53 +64,22 @@ export default function RegistroProfesionalPage() {
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-xl shadow-md">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Nombre completo</label>
-              <input
-                type="text"
-                name="nombre"
-                value={formData.nombre}
-                onChange={handleChange}
-                required
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Profesión u oficio</label>
-              <input
-                type="text"
-                name="profesion"
-                value={formData.profesion}
-                onChange={handleChange}
-                required
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Correo electrónico</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Teléfono</label>
-              <input
-                type="tel"
-                name="telefono"
-                value={formData.telefono}
-                onChange={handleChange}
-                required
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2"
-              />
-            </div>
+            {/* Campos del formulario */}
+            {['nombre', 'profesion', 'email', 'telefono'].map((field) => (
+              <div key={field}>
+                <label className="block text-sm font-medium text-gray-700 capitalize">
+                  {field === 'email' ? 'Correo electrónico' : field}
+                </label>
+                <input
+                  type={field === 'email' ? 'email' : 'text'}
+                  name={field}
+                  value={formData[field as keyof typeof formData]}
+                  onChange={handleChange}
+                  required
+                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2"
+                />
+              </div>
+            ))}
 
             <div>
               <label className="block text-sm font-medium text-gray-700">Contraseña</label>
@@ -107,6 +104,17 @@ export default function RegistroProfesionalPage() {
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2"
               />
             </div>
+
+            {/* reCAPTCHA */}
+            <div className="flex justify-center">
+              <ReCAPTCHA
+                sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+                onChange={handleCaptchaChange}
+              />
+            </div>
+            {captchaError && (
+              <p className="text-red-500 text-sm text-center">Por favor, confirma que no eres un robot.</p>
+            )}
 
             <button
               type="submit"

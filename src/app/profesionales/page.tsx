@@ -1,11 +1,11 @@
 // src/app/profesionales/page.tsx
 
-'use client';
+"use client";
 
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import Link from 'next/link';
-import { Briefcase, CalendarDays, Users } from 'lucide-react';
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import Link from "next/link";
+import { Briefcase, CalendarDays, Users } from "lucide-react";
 
 export default function ProfesionalesPage() {
   return (
@@ -19,13 +19,21 @@ export default function ProfesionalesPage() {
             ¿Eres profesionista independiente?
           </h1>
           <p className="text-lg text-gray-700 mb-8">
-            Únete a AlaManoFix y conecta con más clientes en tu zona. Administra tu tiempo, mejora tu reputación y aumenta tus ingresos.
+            Únete a AlaManoFix y conecta con más clientes en tu zona. Administra
+            tu tiempo, mejora tu reputación y aumenta tus ingresos.
           </p>
           <Link
-            href="/registro-profesional" // cambia si tienes una ruta real
-            className="inline-block bg-orange-500 text-white px-6 py-3 rounded-full text-lg font-medium hover:bg-orange-600 transition"
+            href="/registro-profesional"
+            className="bg-orange-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-orange-600 transition"
           >
-            Regístrate ahora
+            Registrarme como profesionista
+          </Link>
+
+          <Link
+            href="/login-profesional"
+            className="ml-4 text-orange-500 font-medium underline hover:text-orange-600"
+          >
+            Ya tengo cuenta
           </Link>
         </div>
       </section>
@@ -33,26 +41,31 @@ export default function ProfesionalesPage() {
       {/* Beneficios */}
       <section className="bg-white py-16">
         <div className="max-w-6xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-12">Beneficios para profesionistas</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-12">
+            Beneficios para profesionistas
+          </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 text-left">
             {[
               {
                 icon: <Briefcase className="w-6 h-6 text-orange-500" />,
-                title: 'Consigue más trabajos',
-                desc: 'Accede a personas que ya están buscando tus servicios.',
+                title: "Consigue más trabajos",
+                desc: "Accede a personas que ya están buscando tus servicios.",
               },
               {
                 icon: <CalendarDays className="w-6 h-6 text-orange-500" />,
-                title: 'Organiza tu horario',
-                desc: 'Tú decides cuándo trabajar. ¡Sin jefes, sin horarios forzados!',
+                title: "Organiza tu horario",
+                desc: "Tú decides cuándo trabajar. ¡Sin jefes, sin horarios forzados!",
               },
               {
                 icon: <Users className="w-6 h-6 text-orange-500" />,
-                title: 'Haz crecer tu reputación',
-                desc: 'Tus buenas calificaciones generan más clientes y confianza.',
+                title: "Haz crecer tu reputación",
+                desc: "Tus buenas calificaciones generan más clientes y confianza.",
               },
             ].map((b, i) => (
-              <div key={i} className="p-6 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition">
+              <div
+                key={i}
+                className="p-6 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition"
+              >
                 <div className="mb-3">{b.icon}</div>
                 <h3 className="text-xl font-semibold mb-1">{b.title}</h3>
                 <p className="text-gray-600">{b.desc}</p>
@@ -65,7 +78,10 @@ export default function ProfesionalesPage() {
       {/* CTA final */}
       <section className="bg-orange-500 py-16 text-center text-white">
         <h2 className="text-3xl font-bold mb-4">¿Listo para comenzar?</h2>
-        <p className="mb-6 text-lg">Regístrate gratis y empieza a recibir solicitudes de clientes hoy mismo.</p>
+        <p className="mb-6 text-lg">
+          Regístrate gratis y empieza a recibir solicitudes de clientes hoy
+          mismo.
+        </p>
         <Link
           href="/registro-profesional"
           className="bg-white text-orange-600 font-semibold px-6 py-3 rounded-full hover:bg-gray-100 transition"
