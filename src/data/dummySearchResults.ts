@@ -1,3 +1,5 @@
+import { pre } from "framer-motion/client";
+
 export const dummySearchResults = [
   {
     id: 1,
@@ -7,6 +9,9 @@ export const dummySearchResults = [
     rating: 4.8,
     descripcion: 'Especialista en fugas, calentadores y mantenimiento general.',
     imagen: '/img/plomero1.jpg',
+    precioMin: 500,
+    precioMax: 1500,
+    precio: 1000,
   },
   {
     id: 2,
@@ -16,6 +21,9 @@ export const dummySearchResults = [
     rating: 4.9,
     descripcion: 'Instalación de focos, reparación de cortos, enchufes y más.',
     imagen: '/img/electricista1.jpg',
+    precioMin: 300,
+    precioMax: 1200,
+    precio: 800,
   },
   {
     id: 3,
@@ -25,6 +33,9 @@ export const dummySearchResults = [
     rating: 4.7,
     descripcion: 'Muebles a medida, reparaciones y remodelaciones.',
     imagen: '/img/carpintero1.jpg',
+    precioMin: 700,
+    precioMax: 2000,
+    precio: 1500,
   },
   {
     id: 4,
@@ -34,6 +45,9 @@ export const dummySearchResults = [
     rating: 4.6,
     descripcion: 'Instalación y reparación de sistemas de aire acondicionado.',
     imagen: '/img/tecnica1.jpg',
+    precioMin: 600,
+    precioMax: 1800,
+    precio: 1200,
   },
   {
     id: 5,
@@ -43,6 +57,9 @@ export const dummySearchResults = [
     rating: 4.5,
     descripcion: 'Reparación de enchufes, instalación de ventiladores y más.',
     imagen: '/img/electricista2.jpg',
+    precioMin: 400,
+    precioMax: 1300,
+    precio: 900,
   },
   {
     id: 6,
@@ -52,6 +69,9 @@ export const dummySearchResults = [
     rating: 4.8,
     descripcion: 'Especialista en filtraciones y mantenimiento de grifos.',
     imagen: '/img/plomera1.jpg',
+    precioMin: 500,
+    precioMax: 1600,
+    precio: 1100,
   },
   {
     id: 7,
@@ -61,6 +81,9 @@ export const dummySearchResults = [
     rating: 4.9,
     descripcion: 'Diseño y construcción de muebles personalizados.',
     imagen: '/img/carpintero2.jpg',
+    precioMin: 800,
+    precioMax: 2500,
+    precio: 1800,
   },
   {
     id: 8,
@@ -70,6 +93,9 @@ export const dummySearchResults = [
     rating: 4.7,
     descripcion: 'Instalación y reparación de sistemas de climatización.',
     imagen: '/img/tecnica2.jpg',
+    precioMin: 700,
+    precioMax: 2000,
+    precio: 1400,
   },
   {
     id: 9,
@@ -79,6 +105,9 @@ export const dummySearchResults = [
     rating: 4.6,
     descripcion: 'Reparación de tuberías y mantenimiento de sistemas hidráulicos.',
     imagen: '/img/plomero2.jpg',
+    precioMin: 550,
+    precioMax: 1700,
+    precio: 1150,
   },
   {
     id: 10,
@@ -88,5 +117,8 @@ export const dummySearchResults = [
     rating: 4.8,
     descripcion: 'Instalación de sistemas eléctricos y reparación de cortos.',
     imagen: '/img/electricista3.jpg',
+    precioMin: 450,
+    precioMax: 1400,
+    precio: 950,
   },
 ];

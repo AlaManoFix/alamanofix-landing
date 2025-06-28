@@ -20,7 +20,7 @@ export default function SearchCard({ data }: { data: any }) {
             {data.rating}
           </div>
           <div className="text-sm font-semibold text-orange-500">
-            ${data.precio} MXN
+            ~ ${data.precio} MXN
           </div>
         </div>
       </div>

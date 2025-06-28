@@ -8,7 +8,7 @@ import SearchCard from '@/components/web-app/SearchCard';
 import Loader from '@/components/Loader';
 
 const categorias = ['Todos', ...Array.from(new Set(dummySearchResults.map((d) => d.profesion)))];
-const ordenamientos = ['Relevancia', 'Mejor valorados'];
+const ordenamientos = ['Relevancia', 'Mejor valorados', 'Precio ascendente', 'Precio descendente'];
 
 export default function SearchResultsPage() {
   const searchParams = useSearchParams();
@@ -16,9 +16,9 @@ export default function SearchResultsPage() {
   const [results, setResults] = useState(dummySearchResults);
   const [categoria, setCategoria] = useState('Todos');
   const [orden, setOrden] = useState('Relevancia');
-  const [isLoading, setIsLoading] = useState(true); // ✅
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Simula carga inicial
+  // Simula carga inicial (por query)
   useEffect(() => {
     const q = searchParams.get('query') || '';
     setQuery(q);
@@ -26,33 +26,44 @@ export default function SearchResultsPage() {
     setIsLoading(true);
     const timeout = setTimeout(() => {
       setIsLoading(false);
-    }, 1500); // simula 1.5s de carga
+    }, 1500);
 
     return () => clearTimeout(timeout);
   }, [searchParams]);
 
-  // Filtro y ordenamiento
+  // Simula carga al cambiar filtros
   useEffect(() => {
-    let filtrados = [...dummySearchResults];
+    setIsLoading(true);
 
-    if (categoria !== 'Todos') {
-      filtrados = filtrados.filter((item) => item.profesion === categoria);
-    }
+    const timeout = setTimeout(() => {
+      let filtrados = [...dummySearchResults];
 
-    if (orden === 'Mejor valorados') {
-      filtrados.sort((a, b) => b.rating - a.rating);
-    }
+      if (categoria !== 'Todos') {
+        filtrados = filtrados.filter((item) => item.profesion === categoria);
+      }
 
-    if (query.trim()) {
-      filtrados = filtrados.filter((item) =>
-        `${item.nombre} ${item.profesion} ${item.descripcion}`.toLowerCase().includes(query.toLowerCase())
-      );
-    }
+      if (orden === 'Mejor valorados') {
+        filtrados.sort((a, b) => b.rating - a.rating);
+      } else if (orden === 'Precio ascendente') {
+        filtrados.sort((a, b) => a.precio - b.precio);
+      } else if (orden === 'Precio descendente') {
+        filtrados.sort((a, b) => b.precio - a.precio);
+      }
 
-    setResults(filtrados);
+      if (query.trim()) {
+        filtrados = filtrados.filter((item) =>
+          `${item.nombre} ${item.profesion} ${item.descripcion}`.toLowerCase().includes(query.toLowerCase())
+        );
+      }
+
+      setResults(filtrados);
+      setIsLoading(false);
+    }, 1000); // un poco más corto que el inicial
+
+    return () => clearTimeout(timeout);
   }, [categoria, orden, query]);
 
-  if (isLoading) return <Loader />; // ✅ Muestra loader mientras carga
+  if (isLoading) return <Loader />;
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 sm:px-6 lg:px-8 py-6">
