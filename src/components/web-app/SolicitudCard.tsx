@@ -1,3 +1,4 @@
+// File: src/components/web-app/SolicitudCard.tsx
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -5,7 +6,7 @@ import { useRouter } from 'next/navigation';
 export type EstadoSolicitud = 'todas' | 'pendiente' | 'aceptada' | 'rechazada' | 'cancelada' | 'completada';
 
 export interface Solicitud {
-  id: number;
+  id: string; // ← CAMBIO aquí: era number, ahora string
   tipo: 'dirigida' | 'abierta';
   estado: EstadoSolicitud;
   servicio: string;
