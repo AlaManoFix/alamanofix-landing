@@ -1,6 +1,10 @@
+// File: src/components/web-app/TopRatedProfessionals.tsx
 'use client';
 
 import { Star } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import LoaderOverlay from '@/components/shared/LoaderOverlay';
 
 const professionals = [
   {
@@ -30,8 +34,20 @@ const professionals = [
 ];
 
 export default function TopRatedProfessionals() {
+  const router = useRouter();
+  const [loadingId, setLoadingId] = useState<number | null>(null);
+
+  const handleClick = (id: number) => {
+    setLoadingId(id);
+    setTimeout(() => {
+      router.push(`/web-app/perfil/${id}`);
+    }, 300);
+  };
+
   return (
     <section>
+      {loadingId !== null && <LoaderOverlay />}
+
       <h2 className="text-xl font-semibold text-gray-800 mb-4">
         Profesionales mejor valorados
       </h2>
@@ -40,7 +56,8 @@ export default function TopRatedProfessionals() {
         {professionals.map((pro) => (
           <div
             key={pro.id}
-            className="flex items-center gap-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all"
+            onClick={() => handleClick(pro.id)}
+            className="flex items-center gap-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all cursor-pointer"
           >
             <img
               src={pro.avatarUrl}
@@ -49,9 +66,7 @@ export default function TopRatedProfessionals() {
             />
 
             <div className="flex-1">
-              <h3 className="text-sm font-semibold text-gray-800">
-                {pro.name}
-              </h3>
+              <h3 className="text-sm font-semibold text-gray-800">{pro.name}</h3>
               <p className="text-xs text-gray-600">{pro.service}</p>
               <p className="text-xs text-gray-500">{pro.location}</p>
 
@@ -63,9 +78,9 @@ export default function TopRatedProfessionals() {
               </div>
             </div>
 
-            <button className="text-sm text-orange-500 hover:underline font-medium">
+            <span className="text-sm text-orange-500 hover:underline font-medium">
               Ver perfil
-            </button>
+            </span>
           </div>
         ))}
       </div>
