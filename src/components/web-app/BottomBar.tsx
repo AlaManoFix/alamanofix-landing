@@ -1,3 +1,4 @@
+// File: src/components/web-app/BottomBar.tsx
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
@@ -12,7 +13,7 @@ export default function BottomBar({ role = 'cliente' }: { role?: UserRole }) {
 
   const itemsCliente = [
     { label: 'Inicio', icon: Home, href: '/web-app' },
-    { label: 'Solicitudes', icon: ClipboardList, href: '/mis-solicitudes' },
+    { label: 'Solicitudes', icon: ClipboardList, href: '/web-app/solicitudes' },
     { label: 'Favoritos', icon: Heart, href: '/favoritos' },
     { label: 'Perfil', icon: User, href: '/perfil' },
   ];

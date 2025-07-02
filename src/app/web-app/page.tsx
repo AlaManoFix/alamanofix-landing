@@ -1,3 +1,4 @@
+// src/app/web-app/page.tsx
 "use client";
 
 import SmartSearch from "@/components/web-app/SmartSearch";
@@ -10,8 +11,6 @@ import NavbarWebApp from "@/components/web-app/NavbarWebApp";
 export default function WebAppHomePage() {
   return (
     <>
-      <NavbarWebApp />
-
       <main className="min-h-screen bg-gray-50 px-4 sm:px-6 lg:px-8 py-10 pb-24 pt-[136px]">
         {/* Encabezado de bienvenida */}
         <section className="max-w-3xl mx-auto text-center mb-10">
@@ -43,9 +42,6 @@ export default function WebAppHomePage() {
           <ExploreCategories />
         </section>
       </main>
-
-      {/* Barra inferior fija solo en móvil */}
-      <BottomBar />
     </>
   );
 }

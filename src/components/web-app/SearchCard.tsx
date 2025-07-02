@@ -1,9 +1,10 @@
-// src/components/web-app/SearchCard.tsx
+'use client';
 
 import { Star } from 'lucide-react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import LoaderOverlay from '@/components/shared/LoaderOverlay';
 
-// ✅ Define props tipo explícito
 type SearchCardProps = {
   data: {
     id: number;
@@ -20,9 +21,24 @@ type SearchCardProps = {
 };
 
 export default function SearchCard({ data }: SearchCardProps) {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  const handleClick = () => {
+    setLoading(true);
+    setTimeout(() => {
+      router.push(`/web-app/perfil/${data.id}`);
+    }, 300);
+  };
+  
+
   return (
-    <Link href={`/web-app/perfil/${data.id}`}>
-      <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition border border-gray-100 cursor-pointer">
+    <>
+      {loading && <LoaderOverlay />}
+      <div
+        onClick={handleClick}
+        className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition border border-gray-100 cursor-pointer"
+      >
         <img
           src={data.imagen}
           alt={data.nombre}
@@ -44,6 +60,6 @@ export default function SearchCard({ data }: SearchCardProps) {
           </div>
         </div>
       </div>
-    </Link>
+    </>
   );
 }
