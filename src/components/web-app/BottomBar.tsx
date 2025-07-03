@@ -15,7 +15,7 @@ export default function BottomBar({ role = 'cliente' }: { role?: UserRole }) {
     { label: 'Inicio', icon: Home, href: '/web-app' },
     { label: 'Solicitudes', icon: ClipboardList, href: '/web-app/solicitudes' },
     { label: 'Favoritos', icon: Heart, href: '/web-app/favoritos' },
-    { label: 'Perfil', icon: User, href: '/perfil' },
+    { label: 'Perfil', icon: User, href: '/web-app/mi-perfil-cliente' },
   ];
 
   const itemsProfesional = [
