@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 // Datos simulados
 const mockData = {
@@ -57,6 +58,8 @@ const mockData = {
 };
 
 export default function PerfilPage() {
+  const router = useRouter();
+
   const { id } = useParams();
 
   const [filtroEstrellas, setFiltroEstrellas] = useState<number | "all">("all");
@@ -130,7 +133,10 @@ export default function PerfilPage() {
           >
             WhatsApp
           </a>
-          <button className="bg-blue-500 text-white text-sm font-semibold px-4 py-2 rounded-full shadow hover:bg-blue-600">
+          <button
+            onClick={() => router.push(`/web-app/chat/${profesional.id}`)}
+            className="bg-blue-500 text-white text-sm font-semibold px-4 py-2 rounded-full shadow hover:bg-blue-600"
+          >
             Chat App
           </button>
         </div>
@@ -208,7 +214,9 @@ export default function PerfilPage() {
                     ? "bg-orange-500 text-white border-orange-500"
                     : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
                 }`}
-                onClick={() => setFiltroEstrellas(filtro.value as number | 'all')}
+                onClick={() =>
+                  setFiltroEstrellas(filtro.value as number | "all")
+                }
               >
                 {filtro.label}
               </button>
